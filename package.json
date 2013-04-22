@@ -1,0 +1,29 @@
+{
+  "name": "rtv",
+  "version": "3.0.2",
+  "description": "radio and tv broadcasting station (now with liquidsoap and nodejs)",
+  "main": "bot/main.js",
+  "dependencies": {
+    "node-torrent": "~0.1.6",
+    "tiamat": "git://github.com/hakt0r/tiamat.git",
+    "ws": "~0.4.25",
+    "youtube-dl": "~1.2.7",
+    "youtube-feeds": "~2.2.0",
+    "webrtc.io": "~0.0.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hakt0r/rtv.git"
+  },
+  "keywords": [
+    "radio",
+    "tv",
+    "streaming",
+    "studio",
+    "webinterface",
+    "bot"
+  ],
+  "author": "anx",
+  "license": "GPLv3",
+  "gitHead": "61f91f49ff3894ad3f6e3f0e80e68e8f6aa424d9"
+}

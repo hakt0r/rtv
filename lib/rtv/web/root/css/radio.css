@@ -1,0 +1,190 @@
+#chat {
+  position: fixed;
+  right: 5px;
+  top: 5px;
+  width: 100px;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  color: #000;
+  height: 8px;
+  border: solid 1px;
+  border-color: #222 #ccc #d9d9d9 #ccc;
+  border-radius: 25px;  
+  background-color: #8e8d8d;  
+  box-shadow: inset 0 1px 5px 0px rgba(0, 0, 0, .5), 0 1px 0 0px rgba(250, 250, 250, .5);  }
+ 
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  position: relative;
+  top: -1px;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  -webkit-border-radius: 40px;
+  -moz-border-radius: 40px;
+  border-radius: 40px;
+  background-color: #9e9d9d;  
+  box-shadow: inset 0 1px 5px 0px rgba(255, 255, 255, .5), 0 1px 0 0px rgba(7, 7, 7, 0.52);  
+  color: #1C94C4;  
+  outline: none; }
+
+                  #media {
+                 z-index : -2; }
+
+                #overlay {
+                 z-index : -1; }
+
+                 #player {
+                position : fixed;
+                     top : 5px;
+                    
+            left: 10px;
+                 padding : 1px;
+                 z-index : -1; 
+}
+
+                 #ticker {
+                position : absolute;
+                     top : 5px;
+                    left : 5px;
+                  bottom : 2em;
+                   right : 5px;
+                 opacity : 0.7;
+                 z-index : 0; }
+
+                      h1 {
+                  margin : 0; }
+
+                 .notice {
+                 padding : 10px 30px;
+                position : relative; }
+
+              .notice h1 {
+                  margin : 0;
+                 padding : 10px;
+              text-align : center;
+          vertical-align : middle; }
+
+              .notice h2 {
+                  margin : 0;
+                 padding : 10px;
+              text-align : center;
+          vertical-align : middle; }
+
+           .notice:first {
+                 z-index : 1; }
+
+              .notice h1 ,
+              .notice h1 {
+                 z-index : 2; }
+
+            .notice:last {
+                 z-index : 3; }
+
+             .notice svg ,
+             .notice img {
+                 display : block;
+                  height : 100%;
+                    left : 0;
+          pointer-events : none;
+                position : absolute;
+                     top : 0;
+                   width : 100%; }
+
+                       * {
+                   color : #AAA;
+             font-family : "Roboto Condensed", Sans-Serif; }
+
+                  .layer {
+                position : fixed;
+                     
+                top: 35px;
+                    left : 5px;
+                   right : 5px;
+                  bottom : 25px; }
+
+                 .framed {
+              background : #444;
+                  border : #666 2px solid;
+           border-radius : 4px;
+                 padding : 5px; }
+
+              .btn-group {
+                  height : 1.5em;
+                 padding : 5px; }
+
+            .btn-group * {
+                  height : 1.5em; }
+
+               .playlist {
+              min-height : 100px;
+               min-width : 100px; }
+
+                   video {
+                 display : table;
+                  height : 100%;
+                  margin : 0 auto;
+                     top : 0;
+                   width : auto; }
+
+                    body {
+              background : #000;
+   background-attachment : fixed;
+        background-image : url(/img/wp/rtv_wallpaper_02.svg);
+     background-position : center;
+       background-repeat : no-repeat;
+  -ebkit-background-size : cover;
+    -moz-background-size : cover;
+      -o-background-size : cover;
+         background-size : cover;
+                 padding : 0; }
+
+                  header {
+                 display : none;
+              text-align : center; }
+
+                  footer {
+                  bottom : 5px;
+                position : fixed;
+                   right : 5px;
+                 z-index : -1;
+                   color : #000; }
+
+           button.framed {
+           border-bottom : none;
+            border-color : #666;
+              border-top : none; }
+
+     button.framed:hover { border-color : #333; }
+       #play-btn.stalled { background-color : #930; }
+       #play-btn.playing { background-color : #090; }
+       #play-btn.waiting { background-color : #990; }
+       #play-btn.stopped { background-color : #900; }
+               #playback { border-color : #990; }
+                #quality { border-color : #009; }
+                  .blank { background: rgba(255, 255, 255, 0.5); }
+      button.blank:hover {
+            border-color : #930;
+              
+            background: rgba(255, 255, 255, 0.5); }
+
+      button.blank.radio ,
+         button.blank.tv ,
+     button.blank.studio ,
+      button.blank.login {
+             text-indent : -9999px;
+                  height : 24px;
+                   width : 28px;
+     background-position : 2px 2px;
+       background-repeat : no-repeat; }
+
+      button.blank.radio { background-image:url(/img/radio.svg); }
+   button.blank.radio.on { background-image:url(/img/radio_on.svg); }
+         button.blank.tv { background-image:url(/img/tv.svg); }
+      button.blank.tv.on { background-image:url(/img/tv_on.svg); }
+     button.blank.tv.off { background-image:url(/img/tv_off.svg); }
+     button.blank.studio { background-image:url(/img/studio.svg); }
+  button.blank.studio.on { background-image:url(/img/studio_on.svg); }
+ button.blank.studio.off { background-image:url(/img/studio_off.svg); }
+      button.blank.login { background-image:url(/img/login.svg); }

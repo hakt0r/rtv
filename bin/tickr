@@ -1,0 +1,10 @@
+#!/bin/sh
+# agi inotify-tools
+command="$1"; shift
+while inotifywait $@ 2>/dev/null | 
+  grep -q MODIFY && {
+    # echo -n +;
+    eval "$command"; } || true; do
+  #echo -n .;
+  echo -n
+done

@@ -1,0 +1,88 @@
+#!/bin/sh
+
+red(){    awk '{printf "\033[31m%s\033[0m\n",$0}'; }
+yellow(){ awk '{printf "\033[32m%s\033[0m\n",$0}'; }
+green(){  awk '{printf "\033[33m%s\033[0m\n",$0}'; }
+blue(){   awk '{printf "\033[34m%s\033[0m\n",$0}'; }
+
+get_screen(){
+  local i
+  for i in $(seq 20 50);do
+    test -f "/tmp/.X$i-lock" || {
+      echo "$i"; return 0; }
+  done; return 1; }
+
+xpa_wrap(){
+  _help(){ echo "Usage: $@ ID [-v] [-p|-j|-o] COMMAND"; }
+
+  pa_wrap_pipe(){
+    pulseaudio -n --use-pid-file=false  \
+      -L "module-pipe-sink   file=${SOCK_DIR}/${id}-out" \
+      -L "module-pipe-source file=${SOCK_DIR}/${id}-in"; }
+
+  pa_wrap_jack(){
+    pulseaudio \
+      -n --use-pid-file=false  \
+      -L "module-jack-sink"    \
+      -L "module-jack-source"; }
+
+  test -z "$1" && { _help; return; }
+  local id="$1";shift
+
+  local oss=
+  local logfile="/dev/null"
+  local module="pa_wrap_pipe"
+
+  test -z "$SOCK_DIR" && export SOCK_DIR=/var/radio/run
+  cd $HOME; mkdir -p "$SOCK_DIR"
+
+  while echo "x$1"|grep "^x-" >/dev/null 2>&1;do
+    case "$1" in
+      "-k") kill -QUIT $(cat ${SOCK_DIR}/${id}.pid); return $?;;
+      "-d") oss="padsp"; shift;;
+      "-p") module="pa_wrap_pipe"; shift;;
+      "-j") module="pa_wrap_jack"; shift;;
+      "-v") logfile="${SOCK_DIR}/$id.log"; shift;;
+      *) echo "Unknown argument $1"; return 1;;
+    esac
+  done; test -z "$1" && { _help; return; }
+
+  local DISP=$(get_screen)
+  export DISPLAY=":$DISP"
+  export USER=liquidsoap
+  export HOME=/usr/share/liquidsoap
+  
+  test "$logfile" = "/dev/null" ||
+    echo "starting($module) $@
+      CMD='$@'
+      DISPLAY=$DISPLAY
+      ISOCK=${SOCK_DIR}/${id}-in
+      OSOCK=${SOCK_DIR}/${id}-out"
+  
+  ( echo "STARTING ON: $DISPLAY $module $module"
+    echo "Xvfb $DISPLAY -screen 1 800x500x8"
+    Xvfb $DISPLAY -screen 1 800x500x8 >/dev/null 2>&1 & local xpid=$!
+    echo "Waiting for X11"
+    while ! xlsatoms >/dev/null 2>&1;do sleep 1;done
+    echo "X11 Started"
+    x11vnc -loop                      >/dev/null 2>&1 & local vpid=$!
+    echo "Starting pulseaudio"
+    pulseaudio --use-pid-file=false  \
+      -L "module-pipe-sink   file=${SOCK_DIR}/${id}-out" \
+      -L "module-pipe-source file=${SOCK_DIR}/${id}-in"  \
+      -D
+    echo "Starting command: $@"
+    $@                                & local cpid=$!
+    echo "$$"                         >"${SOCK_DIR}/${id}.pid"
+    echo "Started"
+    trap "
+      kill -QUIT $cpid $xpid $ppid $vpid;
+      rm '/tmp/.X$DISP.lock'
+      rm '${SOCK_DIR}/${id}.pid'" \
+    HUP QUIT TERM; wait; ) >"$logfile" 2>&1 &
+
+  test "$logfile" = "/dev/null" ||
+    echo "\
+      XPA_PID=$(cat "${SOCK_DIR}/${id}.pid")"; }
+
+xpa_wrap $@

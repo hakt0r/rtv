@@ -1,0 +1,10 @@
+#!/bin/sh
+if ps aux | grep coffee | grep -q bot;then
+  echo Bot running
+else
+  (
+    cd /var/radio/bot
+    export PATH=$PATH:$(npm bin)
+    coffee ./bot.coffee $@ >/tmp/bot.log 2>&1 &
+  )
+fi

@@ -1,0 +1,5 @@
+#!/bin/sh
+tickr "radio.bot.restart" /var/radio/bot & pid=$!
+tail -f /tmp/bot.log
+kill $pid
+wait

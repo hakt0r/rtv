@@ -1,0 +1,3 @@
+[submodule "lib/rex"]
+	path = lib/rex
+	url = https://github.com/hakt0r/rex.git

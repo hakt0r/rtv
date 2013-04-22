@@ -1,0 +1,18 @@
+request_queue() {
+  echo "reqs.push $@\nexit\n" | nc localhost 1234; }
+
+announce_queue() {
+  echo "announce.push $@\nexit\n" | nc localhost 1234; }
+
+say_time(){ say "$(date +%k:%M)."; }
+
+say(){
+  local h=$(echo "$@" | md5sum -|awk '{print $1}')
+  test -f "/var/radio/tmp/$h.mp3" || (
+    cd /var/radio/tmp/;
+    espeak -p80 -vde -w "$h.wav" "$@"
+    avconv -i "$h.wav" -ac 2 -ar 44100 "$h.mp3";
+    rm "$h.wav"; );
+  announce_queue "/var/radio/tmp/$h.mp3"; }
+
+say_time

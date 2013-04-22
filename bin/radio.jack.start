@@ -1,0 +1,14 @@
+#!/bin/sh
+
+jack_running(){
+  local t=1; test -z "$1" || t="$1"
+  LANG=C jack_wait -t $t -w 2>&1 | awk '
+    BEGIN{r=1}/avail/{r=0}END{exit(r)}
+'; }
+
+jack_running && echo jack is running || {
+  echo starting jack
+  jackd -R -ddummy -C 0 -P 0 >/tmp/jackd.log 2>&1 &
+  jack_running 3 || {
+    echo starting jack FAILED
+    return 1; }; }

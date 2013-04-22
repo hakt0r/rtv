@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ulzq webradio</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link type='text/css' rel='stylesheet' href='css/jquery-ui.min.css'>
+    <link type='text/css' rel='stylesheet' href='css/radio.css'>
+    <link type='text/css' rel='stylesheet' href='css/studio.css'>
+    <!--script type="text/javascript" src="http://coffeescript.org/extras/coffee-script.js"></script-->
+    <!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script-->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/webRTC/webrtc.io-demo/master/site/webrtc.io.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/scottschiller/SoundManager2/master/script/soundmanager2-nodebug-jsmin.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/chrisdone/jquery-console/master/jquery.console.js"></script>
+    <script type="text/javascript">$.browser = {"webkit":function(){return true}}</script>
+    <script dialect="coffee" type="text/javascript" src="lib/sha512.js"></script>
+    <script dialect="coffee" type="text/javascript" src="lib/rtv.js"></script>
+    <script dialect="coffee" type="text/javascript" src="lib/rtv_liquid.js"></script>
+    <script dialect="coffee" type="text/javascript" src="lib/rtv_webrtc.js"></script>
+    <script dialect="coffee" type="text/javascript" src="lib/radio.js"></script>
+    <script dialect="coffee" type="text/javascript" src="lib/studio.js"></script>
+  </head>
+  <body>
+    <div class="layer" id="controls">
+      <div id="player">
+        <div id="control">
+          <header>ulzq</header>
+          <span class="btn-group" id="playback">
+            <button class="framed play off" id="play-btn">play</button>
+            <button class="framed stop" id="stop-btn">stop</button>
+            <input id="volume" type ="range" min="0" max="100" step ="1"/>
+          </span>
+          <span class="btn-group" id="menu"></span>
+        </div>
+      </div>
+    </div>
+    <div class="layer" id="info">
+      <div class="notice">
+        <img preserveAspectRatio="none" class="bottom" src="/img/frame2.svg" />
+        <h1 id="title">guerilla radio</h1>
+        <img class="top" src="/img/frame2_top.svg" />
+      </div>
+      <div id="news"></div>
+    </div>
+    <div class="layer" id="windows">
+      <div class="framed" id="tools">
+        <div class="mixer" id="master-mix"></div>
+        <div class="mixer" id="monitor-mix"></div>
+        <button class="framed dj" id="mic-btn">mic</button>
+        <button id="xfade-btn" class="framed xfade">xfade</button>
+        <div id="xfade-grp"><div class="fader horizontal" id="cross-fdr"></div></div>
+        <div id="search-grp"><input id="search" /><div class="framed draggy" id="results"></div></div>
+        <button id="xfade-btn" class="framed xfade"
+          style="float:right"
+          onclick="r = $('#results'); if(r.css('display') == 'none'){r.css('display','block')}else{r.css('display','none')}"
+          >search</button>
+        <div class="end"></div>
+      </div>
+      <div class="framed" id="decks">
+        <div id="left-deck"></div>
+        <div id="right-deck"></div>
+      </div>
+      <div class="framed window" id="console">
+        <div id="out"></div>
+      </div>
+    </div>
+    <div id="chat"></div>
+    <div class="layer" id="dialogs">
+      <div class="framed window dialog" id="login-dialog">
+        <input id="user" />
+        <input type="password" id="pass" />
+        <hr/>
+        <button id="cancel-login">cancel</button>
+        <button id="do-login">login</button>
+      </div>
+    </div>
+    <footer>&copy; 2008-2013 the guerilla radio team</footer>
+  </body>
+</html>

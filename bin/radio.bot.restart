@@ -1,0 +1,3 @@
+#!/bin/sh
+radio.bot.stop
+radio.bot.start

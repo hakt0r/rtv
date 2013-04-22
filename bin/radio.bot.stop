@@ -1,0 +1,3 @@
+#!/bin/sh
+pid=$(ps aux|grep node|grep bot|awk '{print $2}')
+test -z "$pid" || kill -9 "$pid"
