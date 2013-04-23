@@ -1,0 +1,12 @@
+.*
+node_modules
+jingles/*
+music/*
+videos/*
+podcasts/*
+tmp/*
+etc/roxbot.db
+etc/roxbot.fp
+etc/roxbot.keys
+etc/*.local.*
+junk
