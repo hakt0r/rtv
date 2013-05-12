@@ -13,8 +13,8 @@ module.exports =
     { PREFIX } = this
     { fs, request, Liq } = @api
 
-    @mediapath = "#{PREFIX}/videos"
-    @musicpath = "#{PREFIX}/music"
+    @mediapath = "#{@project}/videos"
+    @musicpath = "#{@project}/music"
 
     @new_command
       cmd   : "!wget"

@@ -8,28 +8,8 @@ class GuerillaStudio
   constructor : ->
     window.Studio = this
 
-    @initGUI()
-
     api.register
-      msg :
-        login : (b) =>
-          console.log "SUCCESS #{b}"
-          @exec "left refresh"
-          @exec "right refresh"
-          @exec "master refresh"
-          @exec "monitor refresh"
-          # @exec "xfade refresh"
-          Dialog.hide("#login-dialog")
-          UIButton.byId.login.hide()
-          UIButton.byId.studio.show()
-          UIButton.byId.chat.show()
-          UIButton.byId.search.show()
-        raw : (m)-> console.log "RAW: #{m.raw}"
-      studio :
-        left    : ui.Left.message 
-        right   : ui.Right.message
-        monitor : ui.Monitor.message
-        master  : ui.Master.message
+      msg:raw: (m)-> console.log "RAW", m
       mode :
         live : (m)->
           ui.Master.out.state on
@@ -38,6 +18,7 @@ class GuerillaStudio
       search : (m)->
         return ui.Search.add_results m
       news : (m)->
+        ticker = $('#news')
         e = document.createElement "p"
         e.innerHTML =
           "NEWS(<a href='#{m.news.source}'>quelle</a>) " + 
@@ -50,20 +31,25 @@ class GuerillaStudio
     echo  : (args,reply) => args.join(' ')
     login : (args,reply) => @login(args.shift(),args.join(' '))
 
-  search : (term) => api.socket.message {search:term}
-  exec   : (m)    => api.socket.message(m) if api.socket?
+  search : (term) =>
+    api.socket.message {search:{opts:['music','youtube'],term:term}}
 
-  login  : (user,pass) =>
-    salt = String.random(10)
-    pass = SHA512(SHA512(pass)+salt)
-    api.socket.message {login:{user:user,pass:pass,salt:salt}}
-    return "logging in as #{user}"
+  exec : ->
+    if api.socket?
+      for m in arguments
+        console.log 'exec', m
+        if typeof m is "string" then api.socket.message({exec:m})
+        else api.socket.message(m)
 
-  toggle_broadcast : () => api.socket.message "go live"
+  toggle_broadcast : => @exec "go live"
 
   toggleGUI : =>
-    $("#windows").css("display", if $("#windows").css("display") is "none" then "block" else "none")
-    @resize_faders()
+      if $("#windows").css("display") is "none"
+        $("#windows").css("display","block")
+        @resize_faders()
+        return true
+      $("#windows").css("display","none")
+      return false
 
   initGUI : =>
     window.ui = {}
@@ -76,7 +62,7 @@ class GuerillaStudio
         line = data.split(' ')
         cmd  = line.shift()
         return Studio.cli[cmd].call(api,line,reply) if Studio.cli[cmd]?
-        api.socket.message data; true
+        Studio.exec data; true
       autofocus: true
       animateScroll: true
       promptHistory: true
@@ -88,50 +74,42 @@ class GuerillaStudio
 
     # MENU BUTTONS
     new UIButton
-      hide : true
-      parent : "#menu"
       id : "studio"
-      class : "framed blank studio"
-      click : -> Studio.toggleGUI()
-      init  : -> $(btn.studio).hide()
-
-    new UIButton
+      parent : "#menu"
+      tooltip : "Open studio window"
       hide : true
-      parent : "#menu"
-      id : "chat"
-      class : "framed blank dj"
-      click : =>
-        if @rtc? then @rtc.quit()
-        else @rtc = new WebRTC $("#chat")
+      class : "framed studio"
+      click : -> if Studio.toggleGUI() then @query.addClass('on') else @query.removeClass('on')
+      init  : -> @hide()
 
-    # new UIButton
-    #   hide : true
-    #   parent : "#menu"
-    #   id : "search"
-    #   class : "framed blank search"
-
-    # LOGIN DIALOG :: refac
     new UIButton
-      parent : "#menu"
-      id : "login"
-      class : "framed blank login"
+      id : "search"
+      parent : "#search-grp"
+      class : "framed list"
+      tooltip : "Toggle search-results display"
       click : ->
-        Dialog.show("#login-dialog")
-        $("#user").focus()
-    defbtn = (btns) ->
-      for k, v of btns
-        btn[k] = document.querySelector v.query
-        btn[k].addEventListener  "click", v.click if v.click?
-        v.init() if v.init?
-    buttons =
-      dologin :
-        query : "#do-login"
-        click : -> Studio.login TEXT("#user"), TEXT("#pass")
-      nologin :
-        query : "#cancel-login"
-        click : -> Dialog.hide("#login-dialog")
-    defbtn buttons
-    $("#pass").on "keypress", (k,e)-> Studio.login TEXT("#user"), TEXT("#pass") if k.keyCode is 13
+        r = $ '#results'
+        if r.css('display') is 'none'
+          r.css 'display','block'
+          @query.addClass 'on'
+        else
+          @query.removeClass 'on'
+          r.css 'display','none'
+
+    for kind in ['youtube','music','videos','podcasts','jingles']
+      new UIButton
+        parent : "#search-grp"
+        id : "search-#{kind}"
+        tooltip : "Toggle #{kind}-search"
+        class : "framed float-right #{if kind is 'youtube' then 'notube' else kind}"
+        click : ->
+          r = $ '#results'
+          if @query.hasClass 'on'
+            @query.removeClass 'on'
+            r.find('.'+kind).css 'display','none'
+          else
+            @query.addClass 'on'
+            r.find('.'+kind).css 'display','block'
 
     # SETUP SLIDERS
     $(".fader.horizontal").slider(
@@ -162,10 +140,14 @@ class GuerillaStudio
         results = $("#results")
         results.css("display","block")
         results.css("position","fixed")
-        lines = search.result.split("\n")
-        for l in lines
-          t = cleanup_filename(l)
-          results.append "<a href='#' onclick='ui.Search.add_result(this,\"#{l}\")' class='result'>#{t}</a>"
+        for l in search.result
+          if search.kind is "youtube"
+            t = "#{l.title}"
+            s = "ui.Search.add_youtube('#{l.id}')"
+          else
+            t = cleanup_filename(l)
+            s = "ui.Search.add_result(this,'#{l}')"
+          results.append """<a href="#" onclick="#{s}" class="#{search.kind} result">#{t}</a>\n"""
         results.find("a").css("display","block")
     ui.Search.field.keypress (evt) =>
       if evt.which == 13
@@ -183,18 +165,23 @@ class GuerillaStudio
     # UI::GLUE::MIXERS
     ui.Master = new Mixer
       resource : "master"
+      tooltip : "Master-mixer / Broadcast control"
       output :
-        class : "signal"
-        action : => @exec "go live-toggle"
+        class   : "signal"
+        tooltip : "Toggle broadcasting"
+        action  : => @exec "go live-toggle"
       inputs :
         0 : "music"
         1 : "dj"
         2 : "conf"
         3 : "voip"
+
     ui.Monitor = new Mixer
+      tooltip : "Monitor-mixer"
       resource : "monitor"
       output:
         class : "monitor"
+        tooltip : "Toggle monitor"
         action : => @exec "monitor.toggle"
       inputs :
         0 : "music"
@@ -202,13 +189,11 @@ class GuerillaStudio
 
     # UI::GLUE::MODULES
     ui.Xfade = new Module("#xfade-grp")
-    ui.Xfade.fader.on "slide", (evt,ui) =>
-      api.socket.message("fade set #{ui.value}")
-    ON "#broadcast", "click", => @toggle_broadcast()
+    ui.Xfade.fader.on "slide", (evt,ui) -> Studio.exec("fade set #{ui.value}")
+    ON "#broadcast", "click", -> Studio.toggle_broadcast()
 
     # resize .fader.horizontal
     @resize_faders = -> $("#decks .fader.vertical").css "height", ($(".playlist").height()-43) + "px"
     $(window).on "resize", @resize_faders
-
 
 $(document).ready () -> new GuerillaStudio()

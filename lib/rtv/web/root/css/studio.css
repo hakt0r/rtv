@@ -1,3 +1,5 @@
+.float-right { float:right; }
+
 hr {
   border: solid 2px rgba(255,255,255,0.1);
   border-radius: 2px;
@@ -42,7 +44,7 @@ hr {
 
 #dialogs.layer .dialog {
   margin: auto; 
-  margin-top: 1%;
+  margin-top: 60px;
 }
 
 #dialogs.layer {
@@ -65,8 +67,9 @@ hr {
   width:200px; }
 
 #login-dialog button#do-login { float: right; }
-#login-dialog button { color:#000;font-weight:bold }
-#login-dialog input:focus { border: solid 1px yellow; outline:none; }
+#login-dialog button { color:#000;font-weight:bold ; border: solid 2px blue;}
+#login-dialog button:focus,
+#login-dialog input:focus { border: solid 2px yellow; outline:none; }
 #login-dialog input {
   background: rgb(163, 163, 163);
   color: #000;
@@ -77,7 +80,9 @@ hr {
   margin: auto;
   width: 194px;
   padding: 2px;
-  margin-top: 5px; }
+  margin-top: 5px; 
+  border: solid 2px blue;
+}
 #tools {
   height: 24px;
   background: rgba(255, 255, 255, 0.5);
@@ -90,9 +95,9 @@ hr {
 
 #xfade-grp {
   bottom: 14px;
-  left: 151px;
+  left: 50px;
   position: absolute;
-  right: 200px; }
+  right: 340px; }
 
 #search-grp {
   float:right;
@@ -110,12 +115,18 @@ hr {
   z-index: 11; }
 
 #results a {
-  background:none repeat scroll 0 0 #333;
+  background:none no-repeat scroll 0 0 #333;
+  background-position: 3px 3px;
   border-radius:3px 3px 3px 3px;
   margin-bottom:1px;
   padding:3px;
-  text-decoration:none; }
+  padding-left: 30px;
+  text-decoration:none; 
+  font-size: 12px;
+}
 
+#results a.youtube{ background-image: url(/img/notube.svg); }
+#results a.music{   background-image: url(/img/music.svg); }
 
 #out {
   font-size:14px;
@@ -175,7 +186,7 @@ input, .ui-slider {
   background-color: #8e8d8d;  
   box-shadow: inset 0 1px 5px 0px rgba(0, 0, 0, .5), 0 1px 0 0px rgba(250, 250, 250, .5); }
 
-input { padding: 1px 5px; height: 19px; }
+input { padding: 1px 5px; height: 19px; color: #FFF;}
 
 .ui-slider {
   position: relative; }
@@ -185,7 +196,9 @@ input { padding: 1px 5px; height: 19px; }
   margin-top: 17px;
   margin-right: 2px;
   width: 15px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px; 
+  height: 100px;
+}
 
 .ui-slider-vertical a.ui-slider-handle.ui-state-default {  
   position: absolute;  
@@ -222,8 +235,7 @@ a.ui-slider-handle:active {
 
 .fader-grp {
   border-radius:6px;
-  display:inline-table;
-  margin-bottom:5px;
+  display: inline-table;
   padding:2px; }
 
 .fader-grp button {
@@ -271,8 +283,9 @@ a.ui-slider-handle:active {
 
 .mixer-grp {
   display:none;
-  position:fixed;
-  z-index:100; }
+  position: fixed; 
+  top: 35px;
+}
 
 .deck {
   min-height: 150px;
@@ -319,6 +332,22 @@ button.framed {
   text-indent:-9999px;
   width:28px; }
 
+button.list          { background-image:url(/img/list.svg); }
+button.list.on       { background-image:url(/img/list_on.svg); }
+button.upload        { background-image:url(/img/upload.svg); }
+button.upload.on     { background-image:url(/img/upload_on.svg); }
+button.upload.off    { background-image:url(/img/upload_off.svg); }
+button.studio        { background-image:url(/img/studio.svg); }
+button.studio.on     { background-image:url(/img/studio_on.svg); }
+button.studio.off    { background-image:url(/img/studio_off.svg); }
+button.notube        { background-image:url(/img/notube.svg); }
+button.notube.on     { background-image:url(/img/notube_on.svg); }
+button.videos        { background-image:url(/img/camera.svg); }
+button.videos.on     { background-image:url(/img/camera_on.svg); }
+button.podcasts      { background-image:url(/img/podcasts.svg); }
+button.podcasts.on   { background-image:url(/img/podcasts_on.svg); }
+button.jingles       { background-image:url(/img/jingles.svg); }
+button.jingles.on    { background-image:url(/img/jingles_on.svg); }
 button.play          { background-image:url(/img/play.svg); }
 button.stop          { background-image:url(/img/stop.svg); }
 button.refresh       { background-image:url(/img/refresh.svg); }
@@ -354,5 +383,5 @@ button.music:hover   { background-image:url(/img/music_idle.svg); }
 button.music.on      { background-image:url(/img/music_on.svg); }
 button.music.off     { background-image:url(/img/music_off.svg); }
 button.pause         { background-image:url(/img/pause.svg); }
-button.play.on,button.pause.on,button.stop.on    { background-color:#006; }
+button.play.on, button.pause.on, button.stop.on    { background-color:#006; }
 button.play.off,button.pause.off,button.stop.off { background-color:#600; }

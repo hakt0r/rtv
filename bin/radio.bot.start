@@ -1,9 +1,0 @@
-#!/bin/sh
-if ps aux | grep coffee | grep -q bot;then
-  echo Bot running
-else
-  (
-    export PATH=$PATH:$(npm bin)
-    node /var/radio/lib/main.js $@ >/tmp/bot.log 2>&1 &
-  )
-fi

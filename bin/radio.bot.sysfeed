@@ -1,6 +1,0 @@
-#!/bin/sh
-tail -f /var/log/auth.log |
-  while read line;do
-    echo '{"log":{"auth":"'"$line"'"}}' |
-      nc localhost 8100
-  done

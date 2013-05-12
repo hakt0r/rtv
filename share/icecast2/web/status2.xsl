@@ -1,0 +1,1 @@
+/etc/icecast2/web/status2.xsl

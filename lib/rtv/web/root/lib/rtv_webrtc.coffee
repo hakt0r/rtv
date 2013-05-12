@@ -2,13 +2,26 @@
   WebRTC module
 ###
 
-class WebRTC 
+$(document).ready ->
+  new UIButton
+    id : "chat"
+    parent : "#menu"
+    tooltip : "Activate WebRTC-chat"
+    hide : true
+    class : "framed dj"
+    click : =>
+      if @rtc? then @rtc.quit()
+      else
+        @rtc = new WebRTC $("#chat")
+        @hide()
 
+class WebRTC 
   constructor : (@parent) ->
     @videos = []
     me = this
 
     parent.append("""<div id="videos"><video id="rtc-you" autoplay/></div>""")
+
     if PeerConnection
       rtc.createStream { video: true , audio: true },
         (stream) ->
@@ -16,6 +29,7 @@ class WebRTC
           you.src = URL.createObjectURL(stream)
           me.videos.push you
           $(".layer").css("right","66px") # nudge layer to the right to make place for videos
+
     else
       alert "Your browser is not supported or rtc-you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome"
       return

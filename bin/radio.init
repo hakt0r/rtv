@@ -1,8 +1,0 @@
-#wget http://dl.tribler.org/tribler-swift_6.0.0-28795_i386.deb
-#dpkg -i tribler-swift_6.0.0-28795_i386.deb
-
-# init config files
-( IFS="\n" cd /var/radio; find etc/*/ -type f | while read file;do
-    echo "linking $file"
-    ln -sf "/var/radio/$file" "/$file"
-  done; )

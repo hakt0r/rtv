@@ -1,0 +1,1 @@
+/etc/icecast2/web/server_version.xsl

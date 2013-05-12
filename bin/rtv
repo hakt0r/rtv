@@ -1,0 +1,48 @@
+#!/bin/sh
+# bin/rtv - part of the RTV project
+# - Wrappers, glue and spells
+# c) 2012 - 2013
+#   Sebastian Glaser <anx@ulzq.de>
+# Licensed under GNU GPLv3
+base=$(echo $(dirname $(dirname $(readlink -f $0))))
+args="\
+  --minUptime 1000\
+  --spinSleepTime 1000
+  -m 1\
+  -a\
+  -e $base/log/forever.log\
+  -l $base/log/forever.log\
+  -o $base/log/forever.log"
+cmd="$1"; shift
+case "$cmd" in
+"start"|"stop"|"restart")
+  sh "$0" ice "$cmd"
+  sh "$0" liq "$cmd"
+  sh "$0" bot "$cmd";;
+"bot")
+  verb="$1"; shift
+  case "$verb" in
+  "debug")
+    forever $args stop $base/lib/main.js
+    forever $args -w stop $base/lib/main.js
+    forever $args -w start $base/lib/main.js;;
+  "start") forever $args start $base/lib/main.js;;
+  "stop")  forever $args stop $base/lib/main.js;;
+  "restart")
+    forever $args stop  $base/lib/main.js
+    forever $args start $base/lib/main.js;;
+  esac;;
+"liq" | "liquidsoap" | "ice" | "icecast")
+  test "$cmd" = "ice" && cmd="icecast"
+  test "$cmd" = "liq" && cmd="liquidsoap"
+  verb="$1"; shift
+  case "$verb" in
+  "start") forever $args -c sh start $base/lib/$cmd.sh;;
+  "stop")  forever $args -c sh stop $base/lib/$cmd.sh;;
+  "restart")
+    forever $args -c sh stop  $base/lib/$cmd.sh
+    forever $args -c sh start $base/lib/$cmd.sh;;
+  esac;;
+"-h" | "--help" | "help")
+  echo "rtv [bot|liquidsoap|icecast] start|stop|restart";;
+esac

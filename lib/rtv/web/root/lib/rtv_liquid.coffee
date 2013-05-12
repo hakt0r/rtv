@@ -2,6 +2,8 @@
   Liquidsoap Widgets
 ###
 
+J = window.json
+
 class Module
   constructor : (selector) ->
     @query = $(selector)
@@ -20,7 +22,7 @@ class Fader
       min : 0
       max : 100)
     @fader.slider("value",100)    
-  value : (v) ->
+  value : (v) =>
     if v? then @fader.slider("value",v)
     else return @fader.slider("value")
     @state (v > 0) if @volumestate
@@ -47,14 +49,19 @@ class MixerOutput extends Fader
 
 class Mixer
   constructor : (options={}) ->
-    { @resource, @inputs, @action, @output } = options
+    { @resource, @inputs, @action, @output, @tooltip } = options
     selector = "##{@resource}-mix"
-    $(selector).html """
-      <button class="framed #{@output.class} collapse">#{@name}</button>
-      <div class="framed mixer-grp"></div>"""
-    @query = $(selector)
+    $(selector).append """<div class="framed mixer-grp"></div>"""
+    @query = _query = $(selector)
+    @col = new UIButton
+      parent : "#menu"
+      tooltip : @tooltip
+      class : "framed #{@output.class} collapse"
+      click : ->
+        q = _query.find("> div")
+        return q.css("display","none") unless q.css("display") == "none"
+        return q.css("display","block")
     @group = @query.find(".mixer-grp")
-    @col   = @query.find(".collapse")
     # output
     @group.append """
       <div class="fader-grp out-grp main">
@@ -63,6 +70,7 @@ class Mixer
       </div>"""
     @out = new MixerOutput(this,"out")
     @out.button.on "click", @output.action if @output.action?
+    @out.button.attr('title',@output.tooltip).tooltip() if @output.tooltip?
     # inputs
     @byId  = {}
     for id, resource of @inputs
@@ -73,10 +81,6 @@ class Mixer
           <div class="fader vertical #{resource}-fdr"></div>
         </div>"""
       @byId[id] = this[resource] = new MixerInput(id,this,resource)
-    @col.on "click", () =>
-      q = @query.find("div")
-      return q.css("display","none") unless q.css("display") == "none"
-      return q.css("display","inline-table")
     @message = (m) =>
       m = m.refresh if m.refresh?
       if m.output?
@@ -89,6 +93,9 @@ class Mixer
         for i,v of m.input
           @byId[i].value(parseInt(v.volume))
           @byId[i].state v.selected == "true"
+    reg = studio:{}
+    reg.studio[@resource] = @message
+    api.register reg
 
 class DeckVolume extends Fader
   constructor : (@parent,res) ->
@@ -146,32 +153,31 @@ class Deck
         pos = arr.toArray().indexOf(rid)
         Studio.exec("#{@name} move #{rid} #{pos}")
     @message = (m) =>
-      if m.refresh?
-        @playlist.empty()
-        files = m.refresh
-        for rid, meta of files
-          @playlist.append("<div>#{cleanup_filename(meta.filename)}</div>") if meta.filename?
-      if m.volume?
-        @volume.value(m.volume)
-      if m.meta?
-        e = m.meta
-        @title.text(cleanup_filename(e.filename))
-        @title.effect("highlight",{color:"#662"},500)
-      if m.play?
-        @play.addClass("on")
-        @pause.removeClass("on")
-        @stop.removeClass("on")
-      if m.pause?
-        @pause.addClass("on")
-        @play.removeClass("on")
-        @stop.removeClass("on")
-      if m.stop?
-        @stop.addClass("on")
-        @play.removeClass("on")
-        @pause.removeClass("on")
-      if m.push?
-        e = m.push
-        @playlist.append("<div remoteid='#{e.rid}'>#{cleanup_filename(e.meta.filename)}</div>")
+    reg = studio:{}
+    reg.studio[@name] =
+        volume: @volume.value
+        refresh: (files) =>
+          @playlist.empty()
+          for rid, meta of files when meta.filename?
+            @playlist.append("<div>#{cleanup_filename(meta.filename)}</div>")
+        meta: (e) =>
+          @title.text(cleanup_filename(e.filename))
+          @title.effect("highlight",{color:"#662"},500)
+        play: =>
+          @play.addClass("on")
+          @pause.removeClass("on")
+          @stop.removeClass("on")
+        pause: =>
+          @pause.addClass("on")
+          @play.removeClass("on")
+          @stop.removeClass("on")
+        stop: =>
+          @stop.addClass("on")
+          @play.removeClass("on")
+          @pause.removeClass("on")
+        push: (e) =>
+          @playlist.append("<div remoteid='#{e.rid}'>#{cleanup_filename(e.meta.filename)}</div>")
+    api.register reg
   push   : (uri)    -> Studio.exec("#{@name} push #{uri}")
   insert : (uri,at) -> Studio.exec("#{@name} insert #{at} #{uri}")
   remove : (at)     -> Studio.exec("#{@name} remove #{at} #{uri}")

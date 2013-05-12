@@ -41,22 +41,14 @@ class GuerillaRadio
       click : -> Radio.mode "play", "tv"
 
     api.register
-      meta : (m) =>
-        $("#title").html """
-          <div class="notice">
-            <img src="/img/frame2.svg" />
-            <h1>#{meta_to_title(m)}</h1>
-            <img src="/img/frame2_top.svg" />
-          </div>"""
+      meta : (m) => $("#title").html meta_to_title(m)
       news : (m) =>
         $("#news").append """
-          <div class="notice" id="news-#{++Radio.newsid}">
-            <img src="/img/frame2.svg" />
+          <div class="news" id="news-#{++Radio.newsid}">
             <h2>
               <a href='#{m.link}'>#{m.title}</a>
               (<a href='#{m.source}'>quelle</a>)
             </h2>
-            <img src="/img/frame2_top.svg" />
           </div>"""
         @remove_newsitem Radio.newsid
 
