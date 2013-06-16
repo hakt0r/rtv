@@ -1,5 +1,5 @@
 module.exports = ->
-  config = @config.rtv.icecast 
+  config = @config.rtv.icecast
 
   defaults =
       maxclients : 100
